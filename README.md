@@ -57,7 +57,7 @@ pip3 install requests
 Windows (PowerShell)
 
 winget install Python.Python Git.Git
-git clone 
+git clone  https://github.com/GR1M-swat/cry
 cd cry
 pip install requests
 Termux
