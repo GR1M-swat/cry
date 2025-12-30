@@ -43,14 +43,14 @@ Example: !tcp 1.1.1.1 80 120
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-pip git
-git clone 
+git clone https://github.com/GR1M-swat/cry
 cd cry
 pip3 install requests
 
 macOS
 
 install python git
-git clone 
+git clone https://github.com/GR1M-swat/cry
 cd cry
 pip3 install requests
 
@@ -71,7 +71,7 @@ iSH Shell
 - - -
 apk update
 apk add python3 py3-pip git
-git clone 
+git clone https://github.com/GR1M-swat/cry
 pip install requests
 cd cry
 python3 cry.py
