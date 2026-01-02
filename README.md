@@ -64,7 +64,7 @@ Termux
 pkg update && pkg upgrade
 pkg install python git
 pip install request 
-git clone 
+git clone https://github.com/GR1M-swat/cry
 cd cry
 python3 cry.py
 iSH Shell
