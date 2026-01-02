@@ -78,8 +78,6 @@ python3 cry.py
 
 - - -
 
-<img width="396" height="499" alt="crypng" src="https://github.com/user-attachments/assets/ba33ccfa-8743-482f-a67f-cea5aaa498da" />
-
 Usage
 !help
 !methods
